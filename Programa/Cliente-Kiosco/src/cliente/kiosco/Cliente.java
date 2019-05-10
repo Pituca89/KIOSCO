@@ -2,6 +2,8 @@ package cliente.kiosco;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.awt.TextArea;
+import java.awt.event.ActionListener;
 import java.io.DataOutputStream;
 import java.net.Socket;
 
@@ -10,6 +12,8 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 public class Cliente extends JFrame {
 
@@ -19,6 +23,8 @@ public class Cliente extends JFrame {
 	private String host = "localhost";
 	private DataOutputStream salida;
 	private String nombre;
+	private JTextField textField;
+	private JTextArea textArea;
 	/**
 	 * Launch the application.
 	 */
@@ -43,8 +49,17 @@ public class Cliente extends JFrame {
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		textArea = new JTextArea();
+		textArea.setBounds(10, 62, 414, 171);
+		contentPane.add(textArea);
+		
+		textField = new JTextField();
+		textField.setBounds(10, 11, 268, 20);
+		contentPane.add(textField);
+		textField.setColumns(10);
 		try {
 			this.nombre = JOptionPane.showInputDialog("nombre");
 			super.setTitle(super.getTitle() + this.nombre);
@@ -68,16 +83,14 @@ public class Cliente extends JFrame {
 	private void SalidaEvento(java.awt.event.ActionEvent evt) {
 		try {
 			this.salida = new DataOutputStream(this.cliente.getOutputStream());
-			this.salida.writeUTF(this.nombre + " : ");
+			this.salida.writeUTF(this.nombre + " : " + this.textField.getText());
 		}catch (Exception e) {
 			
 		}
 	}
+
 	
 	public void mensajeria(String msg) {
-		System.out.println(" " + msg + "\n");
+		this.textArea.setText(" " + msg + "\n");
 	}
-	
-	
-
 }

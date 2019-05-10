@@ -9,13 +9,14 @@ import java.net.Socket;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.JTextArea;
 
 public class Servidor extends JFrame {
 
 	private JPanel contentPane;
 	private ServerSocket server;
 	private final int PUERTOH = 1000;
-
+	private JTextArea textArea;
 	/**
 	 * Launch the application.
 	 */
@@ -40,8 +41,12 @@ public class Servidor extends JFrame {
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		textArea = new JTextArea();
+		textArea.setBounds(10, 21, 414, 229);
+		contentPane.add(textArea);
 		
 		try {
 			this.server = new ServerSocket(PUERTOH);
@@ -64,7 +69,7 @@ public class Servidor extends JFrame {
 	
 	
 	public void mensajeria(String msg) {
-		System.out.println(" " + msg + "\n");
+		this.textArea.setText(" " + msg + "\n");
 	}
 
 }
