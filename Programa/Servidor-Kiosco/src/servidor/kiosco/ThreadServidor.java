@@ -1,73 +1,97 @@
 package servidor.kiosco;
+import java.io.*; 
+import java.net.*;
+import java.util.*;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
-import java.util.Vector;
-
-import javax.swing.DefaultListModel;
-
-public class ThreadServidor extends Thread {
-
-	private DataInputStream entrada;
-	private DataOutputStream salida;
-	private Servidor server;
-	private Socket cliente;
-	public static Vector<ThreadServidor> usuarioActivo = new Vector();
-	private String nombre;
-	private ObjectOutputStream salidaObjeto;
+class HiloServidor extends Thread{ 
+	Socket rec;
+	BufferedReader entrada;
+   	PrintWriter salida;
 	
-	public ThreadServidor(Socket socketCliente, String nombre, Servidor server) throws IOException {
-		this.cliente = socketCliente;
-		this.server = server;
-		this.nombre = nombre;
-		this.usuarioActivo.add(this);
+	public static List hilos = new ArrayList();
 		
-		for(int i = 0; i < this.usuarioActivo.size() ; i++) {
-			this.usuarioActivo.get(i).enviosMensajes(nombre + " Se ha conectado...");
-		}
-	}
-	
-	public void run() {
-		String mensaje = " ";
-		while(true) {
-			try {
-				this.entrada = new DataInputStream(this.cliente.getInputStream());
-				mensaje =  entrada.readUTF();
-				
-				for(int i = 0 ; i < this.usuarioActivo.size(); i++) {
-					this.usuarioActivo.get(i).enviosMensajes(mensaje);
-					this.server.mensajeria("Mensaje enviado...");
-				}
-			}catch(Exception e) {
-				break;
-			}
-		}
-		
-		this.usuarioActivo.removeElement(this);
-		this.server.mensajeria("El usuario se ha desconectado...");
-		
-		try {
-			this.cliente.close();
-		}catch (Exception e) {
+	public HiloServidor(Socket c){ 
+		rec=c; 
 			
-		}
+		try{// Extraemos los Streams de entrada y de salida 
+   			salida = new PrintWriter(rec.getOutputStream(),true);
+   			entrada=new BufferedReader(new InputStreamReader(rec.getInputStream()));
+   			start();
+ 		}
+ 		catch(Exception e){
+ 			Servidor.salida(1,e.getMessage());
+ 		}
 	}
-	
-	private void enviosMensajes(String msg) throws IOException {
 		
-		this.salida = new DataOutputStream(cliente.getOutputStream());
-		this.salida.writeUTF(msg);
-		DefaultListModel modelo = new DefaultListModel();
-		
-		for(int i = 0; i < this.usuarioActivo.size(); i++) {
-			modelo.addElement(this.usuarioActivo.get(i).nombre);
-		}
-		
-		this.salidaObjeto = new ObjectOutputStream(cliente.getOutputStream());
-		this.salidaObjeto.writeObject(modelo);
-	}
-	
-}
+	public void run(){ 
+   			
+   		String entra="";
+   		Iterator it;
+   		//se informa al cliente q se ha conectado correctamente
+   		salida.println("5Ha entrado al chat.");
+   		
+   		//se informa al cliente quienes estan conectados actualmente
+   		it = hilos.iterator();
+   		HiloServidor tmp;
+   		while(it.hasNext()){
+   			tmp = (HiloServidor)it.next();
+   			salida.println("7"+tmp.rec.getInetAddress().getHostName());
+   		}
+   		
+   		//se informa a todos los clientes q se ha conectado otro
+   		it = hilos.iterator();
+   		while(it.hasNext()){
+   			tmp = (HiloServidor)it.next();
+   			tmp.salida.println("3"+rec.getInetAddress().getHostName());
+   			tmp.salida.println("4: Ha entrado al chat.");
+   		}
+   		
+   		hilos.add(this); //añadir a lista de clientes
+   		
+ 		try{
+ 			while( (entra=entrada.readLine()) != null){
+ 				if(entra.equals("2")){
+ 					try{
+    					it = hilos.iterator(); //para recorrer el array de hilos    					
+    					for(int j=0; j<Servidor.us.getSize(); j++){
+    						if(this == (HiloServidor)it.next()){
+    							Servidor.us.removeElementAt(j); //eliminar de la lista
+    							break;
+    						}
+    					}    						
+    					//se informa en la conversacion
+    					Servidor.salida(2,rec.getInetAddress().getHostName().toString()+": Ha abandonado el chat.");
+    					hilos.remove(this); //eliminar del array
+    					//se le informa a todos los clientes q alguien se ha desconectado
+    					it = hilos.iterator();
+   						while(it.hasNext()){
+   							tmp = (HiloServidor)it.next();
+   							tmp.salida.println("8"+rec.getInetAddress().getHostName());
+   							tmp.salida.println("9: Ha abandonado el chat.");
+   						}
+    					//se le informa al cliente q se ha desconectado correctamente
+    					salida.println("6Usted se ha desconectado correctamente.");
+    					rec.close(); //cerrar el socket
+    					break; //parar este hilo
+    				}
+    				catch(Exception e){System.err.println(e.getMessage());}
+ 				}
+ 				
+   				Servidor.salida(3, rec.getInetAddress().getHostName()+" dice: \n"+entra.substring(1));
+   				//se reenvia el mesaje a todos los clientes "ECHO"
+   				it = hilos.iterator();
+   				HiloServidor tmp2;
+   				while(it.hasNext()){
+   					tmp2 = (HiloServidor)it.next();
+   					if( !(tmp2.equals(this)) ){
+   						tmp2.salida.println("1"+tmp2.rec.getInetAddress().getHostName()+" dice:");
+   						tmp2.salida.println("2"+entra.substring(1));
+   					}
+   				}
+   			}
+   		}
+   		catch(Exception e){
+   			Servidor.salida(1,e.getMessage());
+   		}
+	} 
+} 

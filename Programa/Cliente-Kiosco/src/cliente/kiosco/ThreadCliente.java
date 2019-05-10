@@ -1,34 +1,31 @@
 package cliente.kiosco;
+import java.io.*; 
+import java.net.*;
 
-import java.io.DataInputStream;
-import java.io.ObjectInputStream;
-import java.net.Socket;
-
-import javax.swing.DefaultListModel;
-
-public class ThreadCliente extends Thread{
-
-	private Socket Socketcliente;
-	private DataInputStream entrada;
-	private Cliente cliente;
-	private ObjectInputStream entradaObjeto;
+class HiloCliente extends Thread{ 
+	static BufferedReader entradaDatos=null;
 	
-	public ThreadCliente(Socket SocketCliente, Cliente cliente) {
-		this.Socketcliente =  SocketCliente;
-		this.cliente = cliente;
+	public HiloCliente(BufferedReader entrada2){
+		entradaDatos = entrada2;
+		start();
 	}
-	
-	public void run() {
-		while(true) {
-			try {
-				this.entrada =  new DataInputStream(this.Socketcliente.getInputStream());
-				this.cliente.mensajeria(this.entrada.readUTF());
-				
-				this.entradaObjeto = new ObjectInputStream(this.Socketcliente.getInputStream());
-				this.cliente.actualizarLista((DefaultListModel) this.entradaObjeto.readObject());
-			} catch (Exception e) {
-				// TODO: handle exception
-			} 
+
+	public void run(){
+		
+   		String linea="";
+		try{
+			while( (linea = entradaDatos.readLine()) != null ){ //escucha mensajes del servidor
+				Cliente.salida(2,linea);
+				if(linea.equals("6Usted a sido desconectado por el servidor."))	break;
+				if(linea.equals("6Usted se ha desconectado correctamente.")) break;
+			}
 		}
+		catch(Exception e){ 
+   			Cliente.salida(1,e.getMessage());
+   			if(entradaDatos!=null){
+   				try{ entradaDatos.close();}
+   				catch(Exception er){}
+   			}
+   		}
 	}
 }
