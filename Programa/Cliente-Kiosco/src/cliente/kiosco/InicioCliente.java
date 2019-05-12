@@ -30,6 +30,8 @@ class InicioCliente {
    	}
 	
 	public static void main(String args[]){ 
-		new Cliente().setVisible(true);	
+		Cliente cliente = new Cliente();
+		cliente.setResizable(true);
+		cliente.setVisible(true);	
   	}
 } 

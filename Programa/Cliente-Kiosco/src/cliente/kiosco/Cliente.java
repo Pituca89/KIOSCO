@@ -33,7 +33,7 @@ public class Cliente extends JFrame {
     
     public Cliente() {
         initComponents();
-        setSize(600,450);       
+        setSize(171,73);       
     }
 
     private void initComponents() {
@@ -144,7 +144,6 @@ public class Cliente extends JFrame {
                 desconectarmeActionPerformed(evt);
             }
         });
-        setResizable(false);
         pack();
     }
         

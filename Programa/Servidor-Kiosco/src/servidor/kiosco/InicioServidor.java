@@ -20,6 +20,9 @@ public class InicioServidor {
    		
    			socketServ = new ServerSocket(7777);
    			Servidor.salida(2, "Socket creado, escuchando en puerto 7777.");
+   			
+   			BaseMySQL conn = new BaseMySQL();
+   			conn.conexion();
    		   		
    			while(true){
    				Socket s=null;   				

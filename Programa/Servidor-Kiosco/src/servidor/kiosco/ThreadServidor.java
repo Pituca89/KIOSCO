@@ -15,7 +15,7 @@ class HiloServidor extends Thread{
 			
 		try{// Extraemos los Streams de entrada y de salida 
    			salida = new PrintWriter(rec.getOutputStream(),true);
-   			entrada=new BufferedReader(new InputStreamReader(rec.getInputStream()));
+   			entrada = new BufferedReader(new InputStreamReader(rec.getInputStream()));
    			start();
  		}
  		catch(Exception e){
