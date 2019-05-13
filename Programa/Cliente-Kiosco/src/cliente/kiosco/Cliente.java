@@ -88,6 +88,9 @@ public class Cliente extends JFrame {
 		
 		JMenu mnNegocio = new JMenu("Negocio");
 		menuBar.add(mnNegocio);
+		
+		JMenuItem mntmConfiguracion = new JMenuItem("Configuracion");
+		menuBar.add(mntmConfiguracion);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -95,14 +98,16 @@ public class Cliente extends JFrame {
 		panelPrincipal = new JPanel();
 		GroupLayout gl_panelPrincipal = new GroupLayout(panelPrincipal);
 		gl_panelPrincipal.setHorizontalGroup(
-			gl_panelPrincipal.createParallelGroup(Alignment.LEADING)
-				.addComponent(panel)
-				.addGap(0, 424, Short.MAX_VALUE)
+			gl_panelPrincipal.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_panelPrincipal.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(panel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 		);
 		gl_panelPrincipal.setVerticalGroup(
-			gl_panelPrincipal.createParallelGroup(Alignment.LEADING)
-				.addComponent(panel)
-				.addGap(0, 219, Short.MAX_VALUE)
+			gl_panelPrincipal.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_panelPrincipal.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(panel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 		);
 		panelPrincipal.setLayout(gl_panelPrincipal);
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
@@ -185,8 +190,37 @@ public class Cliente extends JFrame {
 				panelPrincipal.repaint();
 			}
 		});
+		
+		mntmConfiguracion.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Configuracion panel = new Configuracion();
+				panel.setSize(contentPane.getSize());
+				panelPrincipal.removeAll();
+				panelPrincipal.add(panel);
+				panelPrincipal.revalidate();
+				panelPrincipal.repaint();
+			}
+		});
         pack();
-        conectarmeActionPerformed();
+        Runnable hilo = new Runnable() {
+			
+			@Override
+			public void run() {
+				try {
+					Thread.sleep(1000);
+					conectarmeActionPerformed();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			}
+		};
+		
+		Thread thread =  new Thread(hilo);
+		thread.start();
 
     }
         
@@ -225,7 +259,7 @@ public class Cliente extends JFrame {
     
     private void conectarmeActionPerformed() {
     	//InicioCliente.arrancarCliente(muestraIp.getText(),Integer.parseInt(puertoServ.getText()));    
-    	InicioCliente.arrancarCliente("192.168.137.1",7777);
+    	InicioCliente.arrancarCliente("10.245.75.97",7777);
     	InicioCliente.procesarMensajes();
     }
     

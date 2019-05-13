@@ -1,7 +1,10 @@
 package servidor.kiosco;
 import java.io.*; 
 import java.net.*;
+import java.sql.ResultSet;
 import java.util.*;
+
+import javax.swing.JLabel;
 
 import com.mysql.jdbc.Connection;
 
@@ -9,6 +12,9 @@ class HiloServidor extends Thread{
 	Socket rec;
 	BufferedReader entrada;
    	PrintWriter salida;
+   	
+   	ObjectInputStream entradaO;
+   	ObjectOutputStream salidaO;
 	private BaseMySQL mysql;
 	public static List hilos = new ArrayList();
 		
@@ -18,9 +24,13 @@ class HiloServidor extends Thread{
 		try{// Extraemos los Streams de entrada y de salida 
    			salida = new PrintWriter(rec.getOutputStream(),true);
    			entrada = new BufferedReader(new InputStreamReader(rec.getInputStream()));
+   			
+   			//entradaO = new ObjectInputStream(rec.getInputStream());
+   			//salidaO = new ObjectOutputStream(rec.getOutputStream());
    			start();
  		}
  		catch(Exception e){
+ 			System.out.println("error al crear hilo servidor");
  			Servidor.salida(1,e.getMessage());
  		}
 	}
@@ -52,7 +62,7 @@ class HiloServidor extends Thread{
    		
    		/**Defino los mensajes que me envia el cliente para poder realizar las consultas correspondientes en la bdd**/
  		try{
- 			while( (entra=entrada.readLine()) != null){
+ 			while( (entra=entrada.readLine()) != null){//while(entradaO.readObject()!=null) {//
  				
  				if(entra.equals("2")){
  					try{
@@ -63,7 +73,7 @@ class HiloServidor extends Thread{
     							break;
     						}
     					}    						
-    					//se informa en la conversacion
+    					//se informa en la conversacions
     					Servidor.salida(2,rec.getInetAddress().getHostName().toString()+": Ha abandonado el chat.");
     					hilos.remove(this); //eliminar del array
     					//se le informa a todos los clientes q alguien se ha desconectado
@@ -79,8 +89,11 @@ class HiloServidor extends Thread{
     					break; //parar este hilo
     				}
     				catch(Exception e){System.err.println(e.getMessage());}
- 				} 				
+ 				} 		
+ 				
  				Servidor.salida(3, rec.getInetAddress().getHostName()+" dice: \n"+entra.substring(1));
+ 				//JLabel lbl = (JLabel) entradaO.readObject();
+ 				//Servidor.salida(3, rec.getInetAddress().getHostName()+" dice: \n" + lbl.getText());
  				if(entra.equals(Servidor.STOCK_ACTUAL)) {
 	   				
 	   				//se reenvia el mesaje a todos los clientes "ECHO"
@@ -89,8 +102,17 @@ class HiloServidor extends Thread{
 	   				while(it.hasNext()){
 	   					tmp2 = (HiloServidor)it.next();
 	   					if((tmp2.equals(this)) ){
-	   						tmp2.salida.println("1"+tmp2.rec.getInetAddress().getHostName()+" dice:");
-	   						tmp2.salida.println("2"+entra.substring(1));
+	   						this.mysql = BaseMySQL.getInstance();
+	   						String query = "CALL SCH_KIOSCO.SP_STOCK_ACTUAL('');";
+	   						ResultSet rs = this.mysql.Sentencia(query);
+	   						while(rs.next()) {
+	   							//System.out.println(rs.getInt(1) + "->" + rs.getString(2));
+	   							tmp2.salida.println(rs.getInt(1) + "/" + rs.getString(2) + "/" + rs.getString(3) 
+	   							+ "/" + rs.getString(4) + "/" + rs.getString(5) + "/" + rs.getString(6) 
+	   							+ "/" + rs.getString(7) + "/" + rs.getString(8));
+	   						}
+	   						//tmp2.salida.println("1"+tmp2.rec.getInetAddress().getHostName()+" dice:");
+	   						//tmp2.salida.println("2"+entra.substring(1));
 	   					}
 	   				}
  				}
@@ -98,6 +120,7 @@ class HiloServidor extends Thread{
    		}
    		catch(Exception e){
    			Servidor.salida(1,e.getMessage());
+   			System.out.println("error al recibir mensajes en el servidor");
    		}
 	} 
 } 
