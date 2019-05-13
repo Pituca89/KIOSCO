@@ -3,11 +3,14 @@ package servidor.kiosco;
 import java.io.*; 
 import java.net.*;
 import java.util.*;
+
+import com.mysql.jdbc.Connection;
   
 public class InicioServidor {
 	static String ipLocal = "";
 	static String nombreLocal="";
 	static ServerSocket socketServ = null; 
+	private static BaseMySQL mysql;
     
     public static void main(String args[]) {
     	
@@ -21,9 +24,8 @@ public class InicioServidor {
    			socketServ = new ServerSocket(7777);
    			Servidor.salida(2, "Socket creado, escuchando en puerto 7777.");
    			
-   			BaseMySQL conn = new BaseMySQL();
-   			conn.conexion();
-   		   		
+   			mysql = mysql.getInstance();
+   			   			
    			while(true){
    				Socket s=null;   				
    				s = socketServ.accept(); 

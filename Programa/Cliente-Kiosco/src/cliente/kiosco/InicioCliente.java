@@ -12,7 +12,7 @@ class InicioCliente {
   			sckt = new Socket(dir,puerto);
   		}
   		catch(Exception e){ 
-   			Cliente.salida(1,e.getMessage());
+   			//Cliente.salida(1,e.getMessage());
    		}   		
    	}
    	
@@ -25,7 +25,7 @@ class InicioCliente {
    			new HiloCliente(entradaC);
 		}		
    		catch(Exception e){
-   			Cliente.salida(1,e.getMessage());
+   			//Cliente.salida(1,e.getMessage());
    		}
    	}
 	

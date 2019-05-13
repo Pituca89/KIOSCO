@@ -1,5 +1,7 @@
 package cliente.kiosco;
 import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.border.EmptyBorder;
 import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -17,6 +19,7 @@ public class Cliente extends JFrame {
 	static JButton botonEnviar;
 	static JButton desconectarme;
 	static JButton conectarme;
+	static Component comp;
     public JLabel jLabel1;
     public JLabel jLabel2;
     public JLabel jLabel3;
@@ -30,121 +33,161 @@ public class Cliente extends JFrame {
     static JTextField puertoServ;
     static JTextPane conversacion;
     static JTextPane envioDatos;
-    
+    private JPanel contentPane;
+    static final String STOCK_ACTUAL = "STOCK_ACTUAL";
+    static final String ACTUALIZAR_STOCK = "ACTUALIZAR_STOCK";
+    private JPanel panelPrincipal;
     public Cliente() {
         initComponents();
-        setSize(171,73);       
+        //setSize(171,73);       
     }
 
     private void initComponents() {
-        scConversacion = new JScrollPane();
-        scUsuarios = new JScrollPane();
-        scEnvioDatos = new JScrollPane();
-        conversacion = new JTextPane();
-        envioDatos = new JTextPane();
-        jLabel1 = new JLabel();
-        jLabel2 = new JLabel();
-        jLabel3 = new JLabel();
-        jLabel4 = new JLabel();
-        jLabel5 = new JLabel();
-        botonEnviar = new JButton();
-        desconectarme = new JButton();
-		conectarme = new JButton();
-		muestraIp = new JTextField();
-		puertoServ = new JTextField();
-        usuarios = new JList(us);
-        
-        getContentPane().setLayout(null);
-
-        setTitle("CHAT (cliente)");
+    	
+        setTitle("GESTION DE STOCK");
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent evt) {
                 exitForm(evt);
-            }
-        });
-
-		envioDatos.setEditable(true);
-        scEnvioDatos.setViewportView(envioDatos);		
-        getContentPane().add(scEnvioDatos);
-        scEnvioDatos.setBounds(30, 352, 330, 60);        
-
-        conversacion.setEditable(false);
-        scConversacion.setViewportView(conversacion);
-        getContentPane().add(scConversacion);
-        scConversacion.setBounds(30, 130, 330, 210);
-
-        jLabel1.setFont(new Font("MS Sans Serif", 1, 24));
-        jLabel1.setForeground(new Color(204, 102, 0));
-        jLabel1.setText("CLIENTE");
-        getContentPane().add(jLabel1);
-        jLabel1.setBounds(220, 10, 130, 30);
-
-        jLabel2.setFont(new Font("MS Sans Serif", 1, 14));
-        jLabel2.setText("IP Servidor:");
-        getContentPane().add(jLabel2);
-        jLabel2.setBounds(30, 70, 100, 20);
-
-        getContentPane().add(muestraIp);
-        muestraIp.setBounds(120, 70, 100, 20);
-        
-        jLabel5.setFont(new Font("MS Sans Serif", 1, 14));
-        jLabel5.setText("puerto:");
-        getContentPane().add(jLabel5);
-        jLabel5.setBounds(230, 70, 60, 20);
-        
-        getContentPane().add(puertoServ);
-        puertoServ.setBounds(290, 70, 40, 20);
-        
-        conectarme.setFont(new Font("MS Sans Serif", 1, 12));
-        conectarme.setForeground(new Color(255,20,20));
-        conectarme.setText("Conectarme!");
-        getContentPane().add(conectarme);
-        conectarme.setBounds(340, 70, 120, 20);
-		conectarme.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                conectarmeActionPerformed(evt);
-            }
-        });
-
-        jLabel3.setFont(new Font("MS Sans Serif", 1, 14));
-        jLabel3.setText("Conversación:");
-        getContentPane().add(jLabel3);
-        jLabel3.setBounds(30, 100, 110, 20);
-
-        scUsuarios.setViewportView(usuarios);
-        usuarios.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        getContentPane().add(scUsuarios);
-        scUsuarios.setBounds(380, 132, 180, 180);
-
-        jLabel4.setFont(new Font("MS Sans Serif", 1, 12));
-        jLabel4.setText("Clientes en el chat:");
-        getContentPane().add(jLabel4);
-        jLabel4.setBounds(380, 110, 250, 16);
-
-        botonEnviar.setFont(new Font("MS Sans Serif", 1, 16));
-        botonEnviar.setForeground(new Color(204, 102, 0));
-        botonEnviar.setText("ENVIAR !");
-        botonEnviar.setEnabled(false);
-        getContentPane().add(botonEnviar);
-        botonEnviar.setBounds(380, 352, 180, 60);
-		botonEnviar.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                botonEnviarActionPerformed(evt);
-            }
-        });
                 
-        desconectarme.setFont(new Font("MS Sans Serif", 1, 10));
-        desconectarme.setForeground(new Color(255,20,20));
-        desconectarme.setText("Desconectarme del chat!");
-        desconectarme.setEnabled(false);
-        getContentPane().add(desconectarme);
-        desconectarme.setBounds(380, 315, 180, 25);
-		desconectarme.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                desconectarmeActionPerformed(evt);
             }
         });
+
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 617, 377);
+		setExtendedState(MAXIMIZED_BOTH);
+		
+		JMenuBar menuBar = new JMenuBar();
+		setJMenuBar(menuBar);
+		
+		JMenu mnStock = new JMenu("Stock");
+		menuBar.add(mnStock);
+		
+		JMenuItem mntmStockActual = new JMenuItem("Stock Actual");
+		mnStock.add(mntmStockActual);
+		
+		JMenuItem mntmActualizarStock = new JMenuItem("Actualizar Stock");
+		mnStock.add(mntmActualizarStock);
+		
+		JMenuItem mntmConsumoDeNegocio = new JMenuItem("Consumo de Negocio");
+		mnStock.add(mntmConsumoDeNegocio);
+		
+		JMenuItem mntmDevolucion = new JMenuItem("Devoluci\u00F3n ");
+		mnStock.add(mntmDevolucion);
+		
+		JMenu mnVentas = new JMenu("Ventas");
+		menuBar.add(mnVentas);
+		
+		JMenuItem mntmVentaDelDia = new JMenuItem("Venta del Dia");
+		mnVentas.add(mntmVentaDelDia);
+		
+		JMenu mnProductos = new JMenu("Productos");
+		menuBar.add(mnProductos);
+		
+		JMenu mnInformes = new JMenu("Informes");
+		menuBar.add(mnInformes);
+		
+		JMenu mnNegocio = new JMenu("Negocio");
+		menuBar.add(mnNegocio);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		VentasDiarias panel = new VentasDiarias();
+		panelPrincipal = new JPanel();
+		GroupLayout gl_panelPrincipal = new GroupLayout(panelPrincipal);
+		gl_panelPrincipal.setHorizontalGroup(
+			gl_panelPrincipal.createParallelGroup(Alignment.LEADING)
+				.addComponent(panel)
+				.addGap(0, 424, Short.MAX_VALUE)
+		);
+		gl_panelPrincipal.setVerticalGroup(
+			gl_panelPrincipal.createParallelGroup(Alignment.LEADING)
+				.addComponent(panel)
+				.addGap(0, 219, Short.MAX_VALUE)
+		);
+		panelPrincipal.setLayout(gl_panelPrincipal);
+		GroupLayout gl_contentPane = new GroupLayout(contentPane);
+		gl_contentPane.setHorizontalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addComponent(panelPrincipal, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+		);
+		gl_contentPane.setVerticalGroup(
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addComponent(panelPrincipal, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+					.addGap(11))
+		);
+		contentPane.setLayout(gl_contentPane);
+				
+		mntmStockActual.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				StockActual panel = new StockActual();
+							
+				panel.setSize(contentPane.getSize());
+				
+				panelPrincipal.removeAll();
+				panelPrincipal.add(panel);
+				panelPrincipal.revalidate();
+				panelPrincipal.repaint();
+				
+			}
+		});
+		
+		mntmActualizarStock.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ActualizarStock panel = new ActualizarStock();
+				panel.setSize(contentPane.getSize());
+				panelPrincipal.removeAll();
+				panelPrincipal.add(panel);
+				panelPrincipal.revalidate();
+				panelPrincipal.repaint();
+			}
+		});
+		
+		mntmConsumoDeNegocio.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				DescontarStock panel = new DescontarStock();
+				panel.setSize(contentPane.getSize());
+				panelPrincipal.removeAll();
+				panelPrincipal.add(panel);
+				panelPrincipal.revalidate();
+				panelPrincipal.repaint();
+			}
+		});
+		
+		mntmDevolucion.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				RecuperarStock panel = new RecuperarStock();
+				panel.setSize(contentPane.getSize());
+				panelPrincipal.removeAll();
+				panelPrincipal.add(panel);
+				panelPrincipal.revalidate();
+				panelPrincipal.repaint();
+			}
+		});
+		
+		mntmVentaDelDia.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				VentasDiarias panel = new VentasDiarias();
+				panel.setSize(contentPane.getSize());
+				panelPrincipal.removeAll();
+				panelPrincipal.add(panel);
+				panelPrincipal.revalidate();
+				panelPrincipal.repaint();
+			}
+		});
         pack();
+        conectarmeActionPerformed();
+
     }
         
     private void exitForm(WindowEvent evt) {
@@ -152,7 +195,7 @@ public class Cliente extends JFrame {
     		InicioCliente.salidaC.println("2"); //"2" significa q me desconécte
     	}
     	catch (Exception e) {
-    		salida(1,e.getMessage());
+    		//salida(1,e.getMessage());
     	}
     	
     	if(InicioCliente.sckt != null){ //cerramos el socket
@@ -166,6 +209,7 @@ public class Cliente extends JFrame {
         System.exit(0);
     }
     
+    /**Utilizarlo para cerrar la caja**/
     private void desconectarmeActionPerformed(ActionEvent evt) {
     	int resp=2;
     	resp=JOptionPane.showConfirmDialog(null,"Esta seguro que desea abandonar el chat?","Confirmación",JOptionPane.OK_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE);
@@ -174,32 +218,43 @@ public class Cliente extends JFrame {
     			InicioCliente.salidaC.println("2"); //"2" significa q me desconécte
     		}
     		catch (Exception e) {
-    			salida(1,e.getMessage());
+    			//salida(1,e.getMessage());
     		}
     	}    	
     }
     
-    private void conectarmeActionPerformed(ActionEvent evt) {
-    	InicioCliente.arrancarCliente(muestraIp.getText(),Integer.parseInt(puertoServ.getText()));    	
+    private void conectarmeActionPerformed() {
+    	//InicioCliente.arrancarCliente(muestraIp.getText(),Integer.parseInt(puertoServ.getText()));    
+    	InicioCliente.arrancarCliente("192.168.137.1",7777);
     	InicioCliente.procesarMensajes();
     }
     
     private void botonEnviarActionPerformed(ActionEvent evt) {
     	datoEscrito=envioDatos.getText().toString(); //capturamos lo q se escribio
-    	
+    	/**Defino los mensajes que envio al servidor dependiendo de las consultas que necesito**/
     	if( datoEscrito.equals("") == false){ //se envia si escribe algo
     		try{
     			InicioCliente.salidaC.println("1"+datoEscrito);
-    			salida(3,InetAddress.getLocalHost().getHostName()+" dice:\n"+datoEscrito);
+    			//salida(3,InetAddress.getLocalHost().getHostName()+" dice:\n"+datoEscrito);
     		}
     		catch (Exception e) {
-    			salida(1,e.getMessage());
+    			//salida(1,e.getMessage());
     		}
     	}
     	envioDatos.setText("");
     	envioDatos.requestFocus();
     }
     
+
+	public JPanel getPanelPrincipal() {
+		return panelPrincipal;
+	}
+
+	public void setPanelPrincipal(JPanel panelPrincipal) {
+		this.panelPrincipal = panelPrincipal;
+		
+	}
+    /*
     public static void salida(int objeto, String dato){
     	hora = new Date();
     	horaActual = hora.getHours()+":"+hora.getMinutes()+":"+hora.getSeconds()+" ";
@@ -321,4 +376,5 @@ public class Cliente extends JFrame {
 				break;
     	}    	
     }
+    */
 }

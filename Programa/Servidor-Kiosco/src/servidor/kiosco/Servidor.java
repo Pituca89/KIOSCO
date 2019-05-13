@@ -28,6 +28,9 @@ public class Servidor extends JFrame {
     static JLabel muestraIp;
     static JTextPane conversacion;
     static JTextPane envioDatos;
+    static final String STOCK_ACTUAL = "STOCK_ACTUAL";
+    static final String ACTUALIZAR_STOCK = "ACTUALIZAR_STOCK";
+ 
     
     public Servidor() {
         initComponents();

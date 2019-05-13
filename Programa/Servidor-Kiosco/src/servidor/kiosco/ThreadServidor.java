@@ -3,11 +3,13 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
+import com.mysql.jdbc.Connection;
+
 class HiloServidor extends Thread{ 
 	Socket rec;
 	BufferedReader entrada;
    	PrintWriter salida;
-	
+	private BaseMySQL mysql;
 	public static List hilos = new ArrayList();
 		
 	public HiloServidor(Socket c){ 
@@ -48,8 +50,10 @@ class HiloServidor extends Thread{
    		
    		hilos.add(this); //añadir a lista de clientes
    		
+   		/**Defino los mensajes que me envia el cliente para poder realizar las consultas correspondientes en la bdd**/
  		try{
  			while( (entra=entrada.readLine()) != null){
+ 				
  				if(entra.equals("2")){
  					try{
     					it = hilos.iterator(); //para recorrer el array de hilos    					
@@ -75,19 +79,21 @@ class HiloServidor extends Thread{
     					break; //parar este hilo
     				}
     				catch(Exception e){System.err.println(e.getMessage());}
+ 				} 				
+ 				Servidor.salida(3, rec.getInetAddress().getHostName()+" dice: \n"+entra.substring(1));
+ 				if(entra.equals(Servidor.STOCK_ACTUAL)) {
+	   				
+	   				//se reenvia el mesaje a todos los clientes "ECHO"
+	   				it = hilos.iterator();
+	   				HiloServidor tmp2;
+	   				while(it.hasNext()){
+	   					tmp2 = (HiloServidor)it.next();
+	   					if((tmp2.equals(this)) ){
+	   						tmp2.salida.println("1"+tmp2.rec.getInetAddress().getHostName()+" dice:");
+	   						tmp2.salida.println("2"+entra.substring(1));
+	   					}
+	   				}
  				}
- 				
-   				Servidor.salida(3, rec.getInetAddress().getHostName()+" dice: \n"+entra.substring(1));
-   				//se reenvia el mesaje a todos los clientes "ECHO"
-   				it = hilos.iterator();
-   				HiloServidor tmp2;
-   				while(it.hasNext()){
-   					tmp2 = (HiloServidor)it.next();
-   					if( !(tmp2.equals(this)) ){
-   						tmp2.salida.println("1"+tmp2.rec.getInetAddress().getHostName()+" dice:");
-   						tmp2.salida.println("2"+entra.substring(1));
-   					}
-   				}
    			}
    		}
    		catch(Exception e){
