@@ -12,6 +12,7 @@ import java.io.*;
 import java.util.*;
 import java.util.Date;
 import java.net.*;
+import javax.swing.LayoutStyle.ComponentPlacement;
 
 public class Cliente extends JFrame {
 	static SimpleAttributeSet at = new SimpleAttributeSet();
@@ -110,7 +111,8 @@ public class Cliente extends JFrame {
 			gl_panelPrincipal.createParallelGroup(Alignment.TRAILING)
 				.addGroup(gl_panelPrincipal.createSequentialGroup()
 					.addContainerGap()
-					.addComponent(panel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+					.addComponent(panel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+					.addGap(155))
 		);
 		gl_panelPrincipal.setVerticalGroup(
 			gl_panelPrincipal.createParallelGroup(Alignment.TRAILING)
@@ -279,127 +281,4 @@ public class Cliente extends JFrame {
 		this.panelPrincipal = panelPrincipal;
 		
 	}
-    /*
-    public static void salida(int objeto, String dato){
-    	hora = new Date();
-    	horaActual = hora.getHours()+":"+hora.getMinutes()+":"+hora.getSeconds()+" ";
-    	
-    	switch(objeto){
-    		case 1: //algun tipo de error
-    			try{
-    				StyleConstants.setForeground(at,Color.red);
-					StyleConstants.setBold(at,true);
-					if(dato.equals("Connection reset")){
-						dato="El servidor se ha caido.";
-						us.removeAllElements(); //se elimina toda la lista de clientes
-						botonEnviar.setEnabled(false);
-						desconectarme.setEnabled(false);
-						muestraIp.setEditable(true);
-						puertoServ.setEditable(true);
-						conectarme.setEnabled(true);
-						InicioCliente.sckt.close(); //cerramos el socket
-						InicioCliente.salidaC.close(); //cerramos el buffer salida
-					}
-					else if(dato.equals("Connection refused: connect")){
-						dato="Conexion denegada: Corrija la IP y/o el puerto.";
-					}
-					else if(dato.equals("Connection timed out: connect")){
-						dato="Tiempo de espera agotado: Corrija la IP y/o el puerto, o tal vez el servidor no esté activo.";
-					}
-					else if(dato.equals("No route to host: connect")){
-						dato="No existe ruta al host: Corrija la IP y/o el puerto.";
-					}
-				
-    				conversacion.getDocument().insertString(conversacion.getDocument().getLength(),horaActual+dato+"\n",at);
-					conversacion.setCaretPosition(conversacion.getDocument().getLength());
-				}
-				catch (Exception e) {System.err.println(e);}
-				break;
-				
-    		case 2: //mensajes entrantes
-    			try{
-					StyleConstants.setForeground(at,Color.blue.darker());
-					StyleConstants.setBold(at,false);
-					if(dato.charAt(0)=='1'){ // de quien recibimos el mensaje
-						conversacion.getDocument().insertString(conversacion.getDocument().getLength(),horaActual+dato.substring(1)+"\n",at);
-					}
-					else if(dato.charAt(0)=='2'){ //mensaje q recibimos
-						conversacion.getDocument().insertString(conversacion.getDocument().getLength(),dato.substring(1)+"\n",at);
-					}
-					else if(dato.charAt(0)=='3'){ //nos informan quien es el nuevo cliente
-						StyleConstants.setForeground(at,Color.green.darker().darker());
-						StyleConstants.setBold(at,true);
-						conversacion.getDocument().insertString(conversacion.getDocument().getLength(),horaActual+dato.substring(1),at);
-						us.addElement(dato.substring(1));
-					}
-					else if(dato.charAt(0)=='4'){ //nos informan de nuevo cliente
-						StyleConstants.setForeground(at,Color.green.darker().darker());
-						StyleConstants.setBold(at,true);
-						conversacion.getDocument().insertString(conversacion.getDocument().getLength(),dato.substring(1)+"\n",at);
-					}
-					else if(dato.charAt(0)=='5'){ //nos informan q nos conectamos
-						StyleConstants.setForeground(at,Color.green.darker().darker());
-						StyleConstants.setBold(at,true);
-						conversacion.getDocument().insertString(conversacion.getDocument().getLength(),horaActual+dato.substring(1)+"\n",at);
-						us.addElement(InicioCliente.sckt.getInetAddress().getHostName()+" (Local).");
-						conectarme.setEnabled(false);
-    					muestraIp.setEditable(false);
-    					puertoServ.setEditable(false);
-    					desconectarme.setEnabled(true);
-    					botonEnviar.setEnabled(true);
-					}
-					else if(dato.charAt(0)=='6'){ //nos desconecto el servidor o nos desconectamos
-						StyleConstants.setForeground(at,Color.red);
-						if(dato.equals("6Usted se ha desconectado correctamente.")){
-							StyleConstants.setForeground(at,Color.green.darker().darker());
-						}
-						StyleConstants.setBold(at,true);
-						conversacion.getDocument().insertString(conversacion.getDocument().getLength(),horaActual+dato.substring(1)+"\n",at);
-						us.removeAllElements(); //se elimina toda la lista de clientes
-						botonEnviar.setEnabled(false);
-						desconectarme.setEnabled(false);
-						muestraIp.setEditable(true);
-						puertoServ.setEditable(true);
-						conectarme.setEnabled(true);
-						InicioCliente.sckt.close(); //cerramos el socket
-						InicioCliente.salidaC.close(); //cerramos el buffer salida
-					}
-					else if(dato.charAt(0)=='7'){ //nos dicen quienes estan conectados
-						us.addElement(dato.substring(1));
-					}
-					else if(dato.charAt(0)=='8'){ //nos informan quien ha sido desconectado
-						StyleConstants.setForeground(at,Color.green.darker().darker());
-						StyleConstants.setBold(at,true);
-						conversacion.getDocument().insertString(conversacion.getDocument().getLength(),horaActual+dato.substring(1),at);
-						int a=0;
-						while(a<us.getSize()){ //para eliminarlo de la lista
-							if(us.getElementAt(a).toString().equals(dato.substring(1))){
-								us.removeElementAt(a);
-								break;
-							}
-							else a++;
-						}
-					}
-					else if(dato.charAt(0)=='9'){ //nos informan alguien ha sido desconectado
-						StyleConstants.setForeground(at,Color.green.darker().darker());
-						StyleConstants.setBold(at,true);
-						conversacion.getDocument().insertString(conversacion.getDocument().getLength(),dato.substring(1)+"\n",at);
-					}
-					conversacion.setCaretPosition(conversacion.getDocument().getLength());
-				}
-				catch (Exception e) {System.err.println(e);}
-				break;
-				
-			case 3: //mensajes salientes
-    			try{
-					StyleConstants.setForeground(at,Color.blue.darker().darker());
-					StyleConstants.setBold(at,true);
-    				conversacion.getDocument().insertString(conversacion.getDocument().getLength(),horaActual+dato+"\n",at);
-					conversacion.setCaretPosition(conversacion.getDocument().getLength());
-				}
-				catch (BadLocationException e) {System.err.println(e);}
-				break;
-    	}    	
-    }
-    */
 }
