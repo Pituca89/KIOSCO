@@ -29,12 +29,10 @@ class HiloCliente extends Thread{
 			while( (linea = entradaDatos.readLine()) != null ){ //escucha mensajes del servidor
 				
 				//StockActual.ActualizarComponentes(linea);
-				System.out.println(linea);
-				JLabel lbl = new JLabel();
-				lbl.setText(linea);
+				//System.out.println(linea);
 				
 				Canal canal = Canal.getInstance();
-				//canal.Push(lbl);
+				canal.Push(linea);
 				
 								
 				if(linea.equals("6Usted a sido desconectado por el servidor."))	break;

@@ -107,9 +107,10 @@ class HiloServidor extends Thread{
 	   						ResultSet rs = this.mysql.Sentencia(query);
 	   						while(rs.next()) {
 	   							//System.out.println(rs.getInt(1) + "->" + rs.getString(2));
-	   							tmp2.salida.println(rs.getInt(1) + "/" + rs.getString(2) + "/" + rs.getString(3) 
-	   							+ "/" + rs.getString(4) + "/" + rs.getString(5) + "/" + rs.getString(6) 
-	   							+ "/" + rs.getString(7) + "/" + rs.getString(8));
+	   							//String salida = Conversor.convertToJSON(rs);
+	   							tmp2.salida.println(rs.getInt(1) + "|" + rs.getString(2) + "|" + rs.getInt(3) 
+	   							+ "|" + rs.getInt(4) + "|" + rs.getDouble(5) + "|" + rs.getDouble(6) 
+	   							+ "|" + rs.getDate(7) + "|" + rs.getInt(8));
 	   						}
 	   						//tmp2.salida.println("1"+tmp2.rec.getInetAddress().getHostName()+" dice:");
 	   						//tmp2.salida.println("2"+entra.substring(1));

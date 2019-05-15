@@ -3,6 +3,9 @@ import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.*;
+
+import com.github.cliftonlabs.json_simple.JsonArray;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -53,7 +56,7 @@ public class Cliente extends JFrame {
         });
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 617, 377);
+		//setBounds(0, 0, MAXIMIZED_VERT, MAXIMIZED_HORIZ);
 		setExtendedState(MAXIMIZED_BOTH);
 		
 		JMenuBar menuBar = new JMenuBar();
@@ -88,6 +91,12 @@ public class Cliente extends JFrame {
 		
 		JMenu mnNegocio = new JMenu("Negocio");
 		menuBar.add(mnNegocio);
+		
+		JMenuItem mntmCierreParcial = new JMenuItem("Cierre Parcial");
+		mnNegocio.add(mntmCierreParcial);
+		
+		JMenuItem mntmCierreFinal = new JMenuItem("Cierre Final");
+		mnNegocio.add(mntmCierreFinal);
 		
 		JMenuItem mntmConfiguracion = new JMenuItem("Configuracion");
 		menuBar.add(mntmConfiguracion);
@@ -129,8 +138,7 @@ public class Cliente extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				StockActual panel = new StockActual();
 							
-				panel.setSize(contentPane.getSize());
-				
+				panel.setSize(contentPane.getSize());				
 				panelPrincipal.removeAll();
 				panelPrincipal.add(panel);
 				panelPrincipal.revalidate();
@@ -143,12 +151,8 @@ public class Cliente extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				ActualizarStock panel = new ActualizarStock();
-				panel.setSize(contentPane.getSize());
-				panelPrincipal.removeAll();
-				panelPrincipal.add(panel);
-				panelPrincipal.revalidate();
-				panelPrincipal.repaint();
+				Actualizar panel = new Actualizar();
+				panel.setVisible(true);	
 			}
 		});
 		
@@ -156,12 +160,8 @@ public class Cliente extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				DescontarStock panel = new DescontarStock();
-				panel.setSize(contentPane.getSize());
-				panelPrincipal.removeAll();
-				panelPrincipal.add(panel);
-				panelPrincipal.revalidate();
-				panelPrincipal.repaint();
+				Descontar panel = new Descontar();
+				panel.setVisible(true);
 			}
 		});
 		
@@ -169,12 +169,9 @@ public class Cliente extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				RecuperarStock panel = new RecuperarStock();
-				panel.setSize(contentPane.getSize());
-				panelPrincipal.removeAll();
-				panelPrincipal.add(panel);
-				panelPrincipal.revalidate();
-				panelPrincipal.repaint();
+				Recuperar panel = new Recuperar();
+				panel.setVisible(true);
+				
 			}
 		});
 		
@@ -201,26 +198,18 @@ public class Cliente extends JFrame {
 				panelPrincipal.add(panel);
 				panelPrincipal.revalidate();
 				panelPrincipal.repaint();
+				
 			}
 		});
         pack();
-        Runnable hilo = new Runnable() {
-			
-			@Override
-			public void run() {
-				try {
-					Thread.sleep(1000);
-					conectarmeActionPerformed();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
+        try {
+			if(HTTPRequest.VerificarServidor()) {
+				System.out.println("conexion exitosa");
 			}
-		};
-		
-		Thread thread =  new Thread(hilo);
-		thread.start();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.out.println("error de verificacion");
+		}
 
     }
         
@@ -262,6 +251,8 @@ public class Cliente extends JFrame {
     	InicioCliente.arrancarCliente("10.245.75.97",7777);
     	InicioCliente.procesarMensajes();
     }
+    
+
     
     private void botonEnviarActionPerformed(ActionEvent evt) {
     	datoEscrito=envioDatos.getText().toString(); //capturamos lo q se escribio
