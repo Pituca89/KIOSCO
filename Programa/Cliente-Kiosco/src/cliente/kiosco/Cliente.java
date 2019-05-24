@@ -13,6 +13,7 @@ import java.util.*;
 import java.util.Date;
 import java.net.*;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import net.miginfocom.swing.MigLayout;
 
 public class Cliente extends JFrame {
 	static SimpleAttributeSet at = new SimpleAttributeSet();
@@ -42,6 +43,7 @@ public class Cliente extends JFrame {
     static final String ACTUALIZAR_STOCK = "ACTUALIZAR_STOCK";
     private JPanel panelPrincipal;
     public Cliente() {
+    	setIconImage(Toolkit.getDefaultToolkit().getImage(Cliente.class.getResource("/javax/swing/plaf/metal/icons/ocean/computer.gif")));
         initComponents();
         //setSize(171,73);       
     }
@@ -61,77 +63,115 @@ public class Cliente extends JFrame {
 		setExtendedState(MAXIMIZED_BOTH);
 		
 		JMenuBar menuBar = new JMenuBar();
+		menuBar.setFont(new Font("Segoe UI", Font.BOLD, 16));
+		menuBar.setBackground(new Color(255, 255, 255));
 		setJMenuBar(menuBar);
 		
 		JMenu mnStock = new JMenu("Stock");
+		mnStock.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+		mnStock.setBackground(new Color(255, 255, 255));
 		menuBar.add(mnStock);
 		
 		JMenuItem mntmStockActual = new JMenuItem("Stock Actual");
+		mntmStockActual.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+		mntmStockActual.setBackground(new Color(255, 255, 255));
 		mnStock.add(mntmStockActual);
 		
-		JMenuItem mntmActualizarStock = new JMenuItem("Actualizar Stock");
+		JMenuItem mntmActualizarStock = new JMenuItem("Reposición rapida");
+		mntmActualizarStock.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+		mntmActualizarStock.setBackground(new Color(255, 255, 255));
 		mnStock.add(mntmActualizarStock);
 		
 		JMenuItem mntmConsumoDeNegocio = new JMenuItem("Consumo de Negocio");
+		mntmConsumoDeNegocio.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+		mntmConsumoDeNegocio.setBackground(new Color(255, 255, 255));
 		mnStock.add(mntmConsumoDeNegocio);
 		
 		JMenuItem mntmDevolucion = new JMenuItem("Devoluci\u00F3n ");
+		mntmDevolucion.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+		mntmDevolucion.setBackground(new Color(255, 255, 255));
 		mnStock.add(mntmDevolucion);
 		
 		JMenu mnVentas = new JMenu("Ventas");
+		mnVentas.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+		mnVentas.setBackground(new Color(255, 255, 255));
 		menuBar.add(mnVentas);
 		
 		JMenuItem mntmVentaDelDia = new JMenuItem("Venta del Dia");
+		mntmVentaDelDia.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+		mntmVentaDelDia.setBackground(new Color(255, 255, 255));
 		mnVentas.add(mntmVentaDelDia);
 		
 		JMenu mnProductos = new JMenu("Productos");
+		mnProductos.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+		mnProductos.setBackground(new Color(255, 255, 255));
 		menuBar.add(mnProductos);
 		
+		JMenuItem mntmActualizarProductos = new JMenuItem("Actualizar Productos");
+		mntmActualizarProductos.setBackground(new Color(255, 255, 255));
+		mntmActualizarProductos.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+		mnProductos.add(mntmActualizarProductos);
+		
 		JMenu mnInformes = new JMenu("Informes");
+		mnInformes.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+		mnInformes.setBackground(new Color(255, 255, 255));
 		menuBar.add(mnInformes);
 		
 		JMenu mnNegocio = new JMenu("Negocio");
+		mnNegocio.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+		mnNegocio.setBackground(new Color(255, 255, 255));
 		menuBar.add(mnNegocio);
 		
 		JMenuItem mntmCierreParcial = new JMenuItem("Cierre Parcial");
+		mntmCierreParcial.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+		mntmCierreParcial.setBackground(new Color(255, 255, 255));
 		mnNegocio.add(mntmCierreParcial);
 		
 		JMenuItem mntmCierreFinal = new JMenuItem("Cierre Final");
+		mntmCierreFinal.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+		mntmCierreFinal.setBackground(new Color(255, 255, 255));
 		mnNegocio.add(mntmCierreFinal);
 		
 		JMenuItem mntmConfiguracion = new JMenuItem("Configuracion");
+		mntmConfiguracion.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+		mntmConfiguracion.setBackground(new Color(255, 255, 255));
 		menuBar.add(mntmConfiguracion);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		VentasDiarias panel = new VentasDiarias();
 		panelPrincipal = new JPanel();
-		GroupLayout gl_panelPrincipal = new GroupLayout(panelPrincipal);
-		gl_panelPrincipal.setHorizontalGroup(
-			gl_panelPrincipal.createParallelGroup(Alignment.TRAILING)
-				.addGroup(gl_panelPrincipal.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(panel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-					.addGap(155))
-		);
-		gl_panelPrincipal.setVerticalGroup(
-			gl_panelPrincipal.createParallelGroup(Alignment.TRAILING)
-				.addGroup(gl_panelPrincipal.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(panel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-		);
-		panelPrincipal.setLayout(gl_panelPrincipal);
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addComponent(panelPrincipal, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+			gl_contentPane.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_contentPane.createSequentialGroup()
+					.addContainerGap()
+					.addComponent(panelPrincipal, GroupLayout.DEFAULT_SIZE, 1344, Short.MAX_VALUE)
+					.addContainerGap())
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addComponent(panelPrincipal, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-					.addGap(11))
+					.addContainerGap()
+					.addComponent(panelPrincipal, GroupLayout.PREFERRED_SIZE, 657, GroupLayout.PREFERRED_SIZE)
+					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 		);
+		GroupLayout gl_panelPrincipal = new GroupLayout(panelPrincipal);
+		gl_panelPrincipal.setHorizontalGroup(
+			gl_panelPrincipal.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelPrincipal.createSequentialGroup()
+					.addGap(7)
+					.addComponent(panel, GroupLayout.DEFAULT_SIZE, 1177, Short.MAX_VALUE)
+					.addContainerGap())
+		);
+		gl_panelPrincipal.setVerticalGroup(
+			gl_panelPrincipal.createParallelGroup(Alignment.LEADING)
+				.addGroup(gl_panelPrincipal.createSequentialGroup()
+					.addGap(8)
+					.addComponent(panel, GroupLayout.DEFAULT_SIZE, 638, Short.MAX_VALUE)
+					.addContainerGap())
+		);
+		panelPrincipal.setLayout(gl_panelPrincipal);
 		contentPane.setLayout(gl_contentPane);
 				
 		mntmStockActual.addActionListener(new ActionListener() {
@@ -153,7 +193,7 @@ public class Cliente extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Actualizar panel = new Actualizar();
+				Actualizar panel = new Actualizar(1);
 				panel.setVisible(true);	
 			}
 		});

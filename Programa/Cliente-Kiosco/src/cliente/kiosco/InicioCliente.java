@@ -24,12 +24,8 @@ class InicioCliente {
    		try{
    			entradaC=new BufferedReader(new InputStreamReader(sckt.getInputStream()));
    			salidaC=new PrintWriter(sckt.getOutputStream(),true);
-   			
-   			//entradaO = new ObjectInputStream(sckt.getInputStream());
-   			//salidaO = new ObjectOutputStream(sckt.getOutputStream());
-   			//System.out.println(sckt.getOutputStream().toString());
+
    			new HiloCliente(entradaC);
-   			//new HiloCliente(entradaO);
 		}		
    		catch(Exception e){
    			System.out.println("Error al establecer canal de comunicacion");
