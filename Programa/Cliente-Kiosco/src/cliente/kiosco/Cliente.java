@@ -15,37 +15,27 @@ import java.net.*;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import net.miginfocom.swing.MigLayout;
 
-public class Cliente extends JFrame {
-	static SimpleAttributeSet at = new SimpleAttributeSet();
-	static DefaultListModel us =new DefaultListModel();
-	static Date hora;
-	static String horaActual;
-	String datoEscrito;
-	static JButton botonEnviar;
-	static JButton desconectarme;
-	static JButton conectarme;
-	static Component comp;
-    public JLabel jLabel1;
-    public JLabel jLabel2;
-    public JLabel jLabel3;
-    public JLabel jLabel4;
-    public JLabel jLabel5;
-    public JList usuarios;
-    public JScrollPane scConversacion;
-    public JScrollPane scUsuarios;
-    public JScrollPane scEnvioDatos;
-    static JTextField muestraIp;
-    static JTextField puertoServ;
-    static JTextPane conversacion;
-    static JTextPane envioDatos;
+public class Cliente extends JFrame implements interfaceMenu{
+
+	private static final int ACTUALIZAR_STOCK = 0;
+	private static final int ACTUALIZAR_PROVEEDOR = 1;
+	private static final int CAJA_FINAL = 2;
+	private static final int CAJA_PARCIAL = 3;
+	private static final int CONSUMO_NEGOCIO = 4;
+	private static final int GASTO_PROVEEDOR = 5;
+	private static final int REPOSICION_RAPIDA = 6;
+	private static final int ACTUALIZAR_PRODUCTO = 7;
+	private static final int LOG = 8;
+	
+    int ancho = java.awt.Toolkit.getDefaultToolkit().getScreenSize().width;
+    int alto = java.awt.Toolkit.getDefaultToolkit().getScreenSize().height;
+    int itemMenu;
     private JPanel contentPane;
-    static final String STOCK_ACTUAL = "STOCK_ACTUAL";
-    static final String ACTUALIZAR_STOCK = "ACTUALIZAR_STOCK";
-    private JPanel panelPrincipal;
+    Login login;
     public Cliente() {
+    	setExtendedState(Frame.MAXIMIZED_BOTH);
     	setIconImage(Toolkit.getDefaultToolkit().getImage(Cliente.class.getResource("/javax/swing/plaf/metal/icons/ocean/computer.gif")));
-        initComponents();
-        //setSize(171,73);       
+        initComponents();   
     }
 
     private void initComponents() {
@@ -57,11 +47,19 @@ public class Cliente extends JFrame {
                 
             }
         });
-
+        /*
+        try {
+        	URL file = getClass().getProtectionDomain().getCodeSource().getLocation();
+			new HTTPRequest(obtenerIP(file));
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		*/
+        //;
+        login = new Login(this);
+        setSize(ancho,alto);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		//setBounds(0, 0, MAXIMIZED_VERT, MAXIMIZED_HORIZ);
-		setExtendedState(MAXIMIZED_BOTH);
-		
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.setFont(new Font("Segoe UI", Font.BOLD, 16));
 		menuBar.setBackground(new Color(255, 255, 255));
@@ -82,10 +80,15 @@ public class Cliente extends JFrame {
 		mntmActualizarStock.setBackground(new Color(255, 255, 255));
 		mnStock.add(mntmActualizarStock);
 		
-		JMenuItem mntmConsumoDeNegocio = new JMenuItem("Consumo de Negocio");
-		mntmConsumoDeNegocio.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-		mntmConsumoDeNegocio.setBackground(new Color(255, 255, 255));
-		mnStock.add(mntmConsumoDeNegocio);
+		JMenuItem mntmListaDeReposicin = new JMenuItem("Lista de Reposici\u00F3n");
+		mntmListaDeReposicin.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+		mntmListaDeReposicin.setBackground(new Color(255, 255, 255));
+		mnStock.add(mntmListaDeReposicin);
+		
+		//JMenuItem mntmConsumoDeNegocio = new JMenuItem("Consumo de Negocio");
+		//mntmConsumoDeNegocio.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+		//mntmConsumoDeNegocio.setBackground(new Color(255, 255, 255));
+		//mnStock.add(mntmConsumoDeNegocio);
 		
 		JMenuItem mntmDevolucion = new JMenuItem("Devoluci\u00F3n ");
 		mntmDevolucion.setFont(new Font("Segoe UI", Font.PLAIN, 16));
@@ -107,27 +110,40 @@ public class Cliente extends JFrame {
 		mnProductos.setBackground(new Color(255, 255, 255));
 		menuBar.add(mnProductos);
 		
+		JMenuItem mntmListadoDeProductos = new JMenuItem("Listado de Productos");
+		mntmListadoDeProductos.setBackground(new Color(255, 255, 255));
+		mntmListadoDeProductos.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+		mnProductos.add(mntmListadoDeProductos);
+		
 		JMenuItem mntmActualizarProductos = new JMenuItem("Actualizar Productos");
 		mntmActualizarProductos.setBackground(new Color(255, 255, 255));
 		mntmActualizarProductos.setFont(new Font("Segoe UI", Font.PLAIN, 16));
 		mnProductos.add(mntmActualizarProductos);
 		
-		JMenu mnInformes = new JMenu("Informes");
-		mnInformes.setFont(new Font("Segoe UI", Font.PLAIN, 16));
-		mnInformes.setBackground(new Color(255, 255, 255));
-		menuBar.add(mnInformes);
+		JMenu mnProveedores = new JMenu("Proveedores");
+		mnProveedores.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+		mnProveedores.setBackground(new Color(255, 255, 255));
+		menuBar.add(mnProveedores);
+		
+		JMenuItem mntmGastoProveedores = new JMenuItem("Gasto Proveedores");
+		mnProveedores.add(mntmGastoProveedores);
 		
 		JMenu mnNegocio = new JMenu("Negocio");
 		mnNegocio.setFont(new Font("Segoe UI", Font.PLAIN, 16));
 		mnNegocio.setBackground(new Color(255, 255, 255));
 		menuBar.add(mnNegocio);
 		
-		JMenuItem mntmCierreParcial = new JMenuItem("Cierre Parcial");
+		JMenuItem mntmMovimientos = new JMenuItem("Movimientos");
+		mntmMovimientos.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+		mntmMovimientos.setBackground(Color.WHITE);
+		mnNegocio.add(mntmMovimientos);
+		
+		JMenuItem mntmCierreParcial = new JMenuItem("Consulta Cierre Parcial");
 		mntmCierreParcial.setFont(new Font("Segoe UI", Font.PLAIN, 16));
 		mntmCierreParcial.setBackground(new Color(255, 255, 255));
 		mnNegocio.add(mntmCierreParcial);
 		
-		JMenuItem mntmCierreFinal = new JMenuItem("Cierre Final");
+		JMenuItem mntmCierreFinal = new JMenuItem("Abrir/Cerrar Caja");
 		mntmCierreFinal.setFont(new Font("Segoe UI", Font.PLAIN, 16));
 		mntmCierreFinal.setBackground(new Color(255, 255, 255));
 		mnNegocio.add(mntmCierreFinal);
@@ -139,53 +155,23 @@ public class Cliente extends JFrame {
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
-		VentasDiarias panel = new VentasDiarias();
-		panelPrincipal = new JPanel();
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
-			gl_contentPane.createParallelGroup(Alignment.TRAILING)
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(panelPrincipal, GroupLayout.DEFAULT_SIZE, 1344, Short.MAX_VALUE)
-					.addContainerGap())
+			gl_contentPane.createParallelGroup(Alignment.LEADING)
+				.addGap(0, 1344, Short.MAX_VALUE)
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(panelPrincipal, GroupLayout.PREFERRED_SIZE, 657, GroupLayout.PREFERRED_SIZE)
-					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+				.addGap(0, 671, Short.MAX_VALUE)
 		);
-		GroupLayout gl_panelPrincipal = new GroupLayout(panelPrincipal);
-		gl_panelPrincipal.setHorizontalGroup(
-			gl_panelPrincipal.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panelPrincipal.createSequentialGroup()
-					.addGap(7)
-					.addComponent(panel, GroupLayout.DEFAULT_SIZE, 1177, Short.MAX_VALUE)
-					.addContainerGap())
-		);
-		gl_panelPrincipal.setVerticalGroup(
-			gl_panelPrincipal.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panelPrincipal.createSequentialGroup()
-					.addGap(8)
-					.addComponent(panel, GroupLayout.DEFAULT_SIZE, 638, Short.MAX_VALUE)
-					.addContainerGap())
-		);
-		panelPrincipal.setLayout(gl_panelPrincipal);
 		contentPane.setLayout(gl_contentPane);
 				
 		mntmStockActual.addActionListener(new ActionListener() {
 			
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				StockActual panel = new StockActual();
-							
-				panel.setSize(contentPane.getSize());				
-				panelPrincipal.removeAll();
-				panelPrincipal.add(panel);
-				panelPrincipal.revalidate();
-				panelPrincipal.repaint();
-				
+			public void actionPerformed(ActionEvent e) {	
+				login.setVisible(true);
+				itemMenu = ACTUALIZAR_STOCK;				
 			}
 		});
 		
@@ -193,11 +179,58 @@ public class Cliente extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Actualizar panel = new Actualizar(1);
-				panel.setVisible(true);	
+				login.setVisible(true);
+				itemMenu = REPOSICION_RAPIDA;
+			}
+		});
+		mntmGastoProveedores.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				login.setVisible(true);
+				itemMenu = GASTO_PROVEEDOR;
+			}
+		});
+		mntmListaDeReposicin.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ListaDeReposicion panel = new ListaDeReposicion();
+				//panel.setSize(ancho, alto);	
+				contentPane.removeAll();
+				contentPane.add(panel);
+				contentPane.revalidate();
+				contentPane.repaint();
 			}
 		});
 		
+		mntmCierreFinal.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				login.setVisible(true);
+				itemMenu = CAJA_FINAL;
+			}
+		});
+		
+		mntmCierreParcial.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				login.setVisible(true);
+				itemMenu = CAJA_PARCIAL;
+			}
+		});
+		
+		mntmMovimientos.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				login.setVisible(true);
+				itemMenu = LOG;
+			}
+		});
+		/*
 		mntmConsumoDeNegocio.addActionListener(new ActionListener() {
 			
 			@Override
@@ -206,7 +239,7 @@ public class Cliente extends JFrame {
 				panel.setVisible(true);
 			}
 		});
-		
+		*/
 		mntmDevolucion.addActionListener(new ActionListener() {
 			
 			@Override
@@ -222,11 +255,24 @@ public class Cliente extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				VentasDiarias panel = new VentasDiarias();
-				panel.setSize(contentPane.getSize());
-				panelPrincipal.removeAll();
-				panelPrincipal.add(panel);
-				panelPrincipal.revalidate();
-				panelPrincipal.repaint();
+				//panel.setSize(ancho, alto);	
+				contentPane.removeAll();
+				contentPane.add(panel);
+				contentPane.revalidate();
+				contentPane.repaint();
+			}
+		});
+		
+		mntmListadoDeProductos.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ListadoProductos panel = new ListadoProductos();
+				//panel.setSize(ancho, alto);	
+				contentPane.removeAll();
+				contentPane.add(panel);
+				contentPane.revalidate();
+				contentPane.repaint();
 			}
 		});
 		
@@ -235,15 +281,25 @@ public class Cliente extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Configuracion panel = new Configuracion();
-				panel.setSize(contentPane.getSize());
-				panelPrincipal.removeAll();
-				panelPrincipal.add(panel);
-				panelPrincipal.revalidate();
-				panelPrincipal.repaint();
+				//panel.setSize(ancho, alto);	
+				contentPane.removeAll();
+				contentPane.add(panel);
+				contentPane.revalidate();
+				contentPane.repaint();
 				
 			}
 		});
+		
+		mntmActualizarProductos.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				login.setVisible(true);
+				itemMenu = ACTUALIZAR_PRODUCTO;
+			}
+		});
         pack();
+        
         try {
 			if(HTTPRequest.VerificarServidor()) {
 				System.out.println("conexion exitosa");
@@ -256,69 +312,69 @@ public class Cliente extends JFrame {
     }
         
     private void exitForm(WindowEvent evt) {
-    	try{
-    		InicioCliente.salidaC.println("2"); //"2" significa q me desconécte
-    	}
-    	catch (Exception e) {
-    		//salida(1,e.getMessage());
-    	}
-    	
-    	if(InicioCliente.sckt != null){ //cerramos el socket
-    		try{ InicioCliente.sckt.close(); }
-    		catch(Exception e){InicioCliente.sckt=null;}
-    	}
-    	if(InicioCliente.salidaC != null){ //cerramos buffer de salida
-    		try{ InicioCliente.salidaC.close(); }
-    		catch(Exception e){InicioCliente.salidaC=null;}
-    	}
         System.exit(0);
     }
     
-    /**Utilizarlo para cerrar la caja**/
-    private void desconectarmeActionPerformed(ActionEvent evt) {
-    	int resp=2;
-    	resp=JOptionPane.showConfirmDialog(null,"Esta seguro que desea abandonar el chat?","Confirmación",JOptionPane.OK_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE);
-    	if(resp==0){
-    		try{
-    			InicioCliente.salidaC.println("2"); //"2" significa q me desconécte
-    		}
-    		catch (Exception e) {
-    			//salida(1,e.getMessage());
-    		}
-    	}    	
-    }
     
-    private void conectarmeActionPerformed() {
-    	//InicioCliente.arrancarCliente(muestraIp.getText(),Integer.parseInt(puertoServ.getText()));    
-    	InicioCliente.arrancarCliente("10.245.75.97",7777);
-    	InicioCliente.procesarMensajes();
-    }
-    
-
-    
-    private void botonEnviarActionPerformed(ActionEvent evt) {
-    	datoEscrito=envioDatos.getText().toString(); //capturamos lo q se escribio
-    	/**Defino los mensajes que envio al servidor dependiendo de las consultas que necesito**/
-    	if( datoEscrito.equals("") == false){ //se envia si escribe algo
-    		try{
-    			InicioCliente.salidaC.println("1"+datoEscrito);
-    			//salida(3,InetAddress.getLocalHost().getHostName()+" dice:\n"+datoEscrito);
-    		}
-    		catch (Exception e) {
-    			//salida(1,e.getMessage());
-    		}
-    	}
-    	envioDatos.setText("");
-    	envioDatos.requestFocus();
-    }
-    
-
-	public JPanel getPanelPrincipal() {
-		return panelPrincipal;
+	@Override
+	public void verificarLogin() {
+		switch (itemMenu) {
+		case ACTUALIZAR_PROVEEDOR:
+			System.out.println("");
+		break;
+		case ACTUALIZAR_STOCK:
+			StockActual stockActual = new StockActual();			
+			contentPane.removeAll();
+			contentPane.add(stockActual);
+			contentPane.revalidate();
+			contentPane.repaint();
+		break;
+		case CAJA_FINAL:
+			CajaFinal panel = new CajaFinal();
+			contentPane.removeAll();
+			contentPane.add(panel);
+			contentPane.revalidate();
+			contentPane.repaint();
+		break;
+		case CAJA_PARCIAL:
+			CierreParcial cierreParcial = new CierreParcial();
+			cierreParcial.setVisible(true);
+		break;
+		case LOG:
+			MovimientosCaja movimientosCaja = new MovimientosCaja();
+			movimientosCaja.setVisible(true);
+		break;
+		case CONSUMO_NEGOCIO:
+			System.out.println("");
+		break;
+		case GASTO_PROVEEDOR:
+			GastoProveedor gastoProveedor = new GastoProveedor();
+			gastoProveedor.setVisible(true);	
+		break;
+		case REPOSICION_RAPIDA:
+			Actualizar reposicioRapida = new Actualizar(1);
+			reposicioRapida.setVisible(true);	
+		break;
+		case ACTUALIZAR_PRODUCTO:
+			ActualizarProductos actualizarProductos = new ActualizarProductos();
+			actualizarProductos.setVisible(true);	
+		break;
+		default:
+			break;
+		}
 	}
-
-	public void setPanelPrincipal(JPanel panelPrincipal) {
-		this.panelPrincipal = panelPrincipal;
-		
-	}
+	
+	static String obtenerIP(URL ruta) throws FileNotFoundException, IOException {
+        String cadena;
+        String [] info = null;
+        String rutafin = ruta.getPath().replace("Kiosco.jar", "config\\config.in");
+        File archivo = new File(rutafin);
+        FileReader f = new FileReader(archivo);
+        BufferedReader b = new BufferedReader(f);
+        while((cadena = b.readLine())!=null) {
+        	info = cadena.split("=");
+        }
+        b.close();
+        return info[1];
+    }
 }
